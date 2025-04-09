@@ -187,6 +187,30 @@ void swap(int *a, int *b) {
 }
 
 /*
+ * Heapify Down
+ * мод болон heapify down гүйцэтгэж эхлэх индекс
+ */
+void heapifyDown(Tree *tree, int index) {
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+    int largest = index;
+
+    if (left < tree->nodes && tree->values[left] > tree->values[largest]) {
+        largest = left;
+    }
+
+    if (right < tree->nodes && tree->values[right] > tree->values[largest]) {
+        largest = right;
+    }
+
+    if (largest != index) {
+        swap(&tree->values[index], &tree->values[largest]);
+        heapifyDown(tree, largest);
+    }
+}
+
+
+/*
  * Heap байгуулах
  * мод болон оруулах элементүүдийг агуулсан хүснэгт, хүснэгтийн хэмжээ
  */
@@ -214,35 +238,6 @@ void heapifyUp(Tree *tree, int index) {
         }
     }
 }    
-
-/*
- * Heapify Down
- * мод болон heapify down гүйцэтгэж эхлэх индекс
- */
-void heapifyDown(Tree *tree, int index) {
-    int left = 2 * index + 1;
-    int right = 2 * index + 2;
-    int max;
-
-    if (right >= tree->nodes) {
-        if (left >= tree->nodes) {
-            return;
-        } else {
-            max = left;
-        }
-    } else {
-        if (tree->values[left] > tree->values[right]) {
-            max = left;
-        } else {
-            max = right;
-        }
-    }
-
-    if (tree->values[index] < tree->values[max]) {
-        swap(&tree->values[index], &tree->values[max]);
-        heapifyDown(tree, max);
-    }
-}
 
 /*
  * Heap-д элемент оруулах
@@ -273,7 +268,9 @@ int heapOut(Tree *tree) {
     tree->values[0] = tree->values[tree->nodes - 1];
     tree->nodes--;
 
-    heapifyDown(tree, 0);
+    if (tree->nodes > 0) {
+        heapifyDown(tree, 0);
+    }
 
     return rootValue;
 }
